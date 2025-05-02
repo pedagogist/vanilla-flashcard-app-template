@@ -23,15 +23,13 @@ const cards = example
 
 let currentIndex = 0;
 
-const entriesBody = document.getElementById("entries-body");
-
 /** Creates a table row for each card, allowing quick navigation. */
 function initEntries() {
 	// Build table rows
-	cards.forEach((card, i) => {
+	for (const [index, card] of cards.entries()) {
 		const row = document.createElement("tr");
 		row.addEventListener("click", () => {
-			currentIndex = i;
+			currentIndex = index;
 			renderCard();
 		});
 		const cellId = document.createElement("td");
@@ -39,21 +37,21 @@ function initEntries() {
 		const cellWord = document.createElement("td");
 		cellWord.textContent = card.word;
 		const cellDue = document.createElement("td");
-		cellDue.textContent = progressData[card.id]?.dueDate || "Unseen"; // If the card has not been learnt before, mark it as "Unseen"
+		cellDue.textContent = progressData[card.id]?.dueDate ?? "Unseen"; // If the card has not been learnt before, mark it as "Unseen"
 
 		row.appendChild(cellId);
 		row.appendChild(cellWord);
 		row.appendChild(cellDue);
-		entriesBody.appendChild(row);
-	});
+		document.getElementById("entries-body").appendChild(row);
+	}
 }
 
 /** Updates highlighted row and due dates each time we render or change data. */
 function updateEntries() {
 	// Update row highlight and due dates
-	cards.forEach((card, i) => {
-		const row = entriesBody.children[i];
-		row.classList.toggle("row-highlight", i === currentIndex);
+	for (const [index, card] of cards.entries()) {
+		const row = document.getElementById("entries-body").children[index];
+		row.classList.toggle("row-highlight", index === currentIndex);
 
 		const cellDue = row.children[row.childElementCount - 1];
 		const dueDateString = progressData[card.id]?.dueDate;
@@ -67,7 +65,7 @@ function updateEntries() {
 			cellDue.textContent = "Unseen";
 			cellDue.classList.remove("overdue-date");
 		}
-	});
+	}
 }
 
 /**
@@ -78,64 +76,47 @@ const posMapping = {
 	n: "noun",
 	v: "verb",
 	adj: "adjective",
+	adv: "adverb",
 	// Add more mappings as needed
 };
 
-// Grabs references to the flashcard UI elements needed to display data.
-const frontWord = document.getElementById("front-word");
-const backPos = document.getElementById("back-pos");
-const backDefinition = document.getElementById("back-definition");
-const backImage = document.getElementById("back-image");
-const backAudio = document.getElementById("back-audio");
-const backVideo = document.getElementById("back-video");
-
-const flipCardCheckbox = document.getElementById("flip-card-checkbox");
-const cardInner = document.getElementById("card-inner");
-const transitionHalfDuration = parseFloat(getComputedStyle(cardInner).transitionDuration) * 1000 / 2;
+const transitionHalfDuration = parseFloat(getComputedStyle(document.getElementById("card-inner")).transitionDuration) * 1000 / 2;
 
 /** Renders the current card on both front and back. */
 function renderCard() {
 	// STUDENTS: Start of recommended modifications
 	// If there are more fields in the dataset (e.g., synonyms, example sentences),
-	// display them here (e.g., backSynonym.textContent = currentCard.synonym).
+	// display them here (e.g., document.getElementById("card-synonym").textContent = currentCard.synonym).
+
+	// Reset flashcard to the front side
+	document.getElementById("card-inner").dataset.side = "front";
 
 	// Update the front side with the current card's word
 	const currentCard = cards[currentIndex];
-	frontWord.textContent = currentCard.word;
+	document.getElementById("card-front-word").textContent = currentCard.word;
 
-	// Reset flashcard to the front side
-	flipCardCheckbox.checked = false;
-
-	// Wait for the back side to become invisible before updating the content
+	// Wait for the back side to become invisible before updating the content on the back side
 	setTimeout(() => {
-		backPos.textContent = posMapping[currentCard.pos] || currentCard.pos;
-		backDefinition.textContent = currentCard.definition;
-
-		if (currentCard.image) {
-			backImage.src = currentCard.image;
-			backImage.style.display = "block";
-		} else {
-			backImage.style.display = "none";
-		}
-
-		if (currentCard.audio) {
-			backAudio.src = currentCard.audio;
-			backAudio.style.display = "block";
-		} else {
-			backAudio.style.display = "none";
-		}
-
-		if (currentCard.video) {
-			backVideo.src = currentCard.video;
-			backVideo.style.display = "block";
-		} else {
-			backVideo.style.display = "none";
-		}
+		document.getElementById("card-back-pos").textContent = posMapping[currentCard.pos] ?? currentCard.pos;
+		document.getElementById("card-back-definition").textContent = currentCard.definition;
+		document.getElementById("card-back-image").src = currentCard.image;
+		document.getElementById("card-back-audio").src = currentCard.audio;
+		document.getElementById("card-back-video").src = currentCard.video;
 	}, transitionHalfDuration);
 	// STUDENTS: End of recommended modifications
 
 	updateEntries();
 }
+
+// Toggle the entries list when the hamburger button in the heading is clicked
+document.getElementById("toggle-entries").addEventListener("click", () => {
+	document.getElementById("entries").hidden = !document.getElementById("entries").hidden;
+});
+
+// Flip the card when the card itself is clicked
+document.getElementById("card-inner").addEventListener("click", event => {
+	event.currentTarget.dataset.side = event.currentTarget.dataset.side === "front" ? "back" : "front";
+});
 
 /** Navigates to the previous card. */
 function previousCard() {
@@ -157,7 +138,7 @@ document.getElementById("btn-skip").addEventListener("click", () => {
 });
 
 /**
- * Mapping between the user's selection (Again, Good, Easy) and the number of days to wait before reviewing the card again.
+ * Mapping between the user's selection (Again, Good, Easy) and the number of days until the due date.
  */
 const dayOffset = { again: 1, good: 3, easy: 7 };
 
@@ -168,7 +149,7 @@ function updateDueDate(type) {
 	const card = cards[currentIndex];
 	const today = new Date();
 	const dueDate = new Date(today.setDate(today.getDate() + dayOffset[type]) - today.getTimezoneOffset() * 60 * 1000);
-	(progressData[card.id] ||= {}).dueDate = dueDate.toISOString().split("T")[0]; // Print the date in YYYY-MM-DD format
+	(progressData[card.id] ??= {}).dueDate = dueDate.toISOString().split("T")[0]; // Print the date in YYYY-MM-DD format
 	saveProgress(progressData);
 	updateEntries();
 }
