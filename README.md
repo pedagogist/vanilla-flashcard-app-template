@@ -42,7 +42,7 @@ You are currently viewing the **basic version**. If your project idea involves i
 
 1. Change the dataset by adding new JSON files within the `data` folder and remove `data/example.json`.
 2. Remove all the example resources inside the `res` folder and place your resources referenced in the dataset there.
-3. Update the `import` statement at the top of `index.js`.
+3. Update the `import` statement at the top of `index.js` to reference your new data file.
 4. Alter HTML elements in the `flashcard` section in `index.html`. Each field in the dataset should correspond to an element with an ID.
 5. Modify the `renderCard` function in `index.js` accordingly to make sure all fields are populated properly.
 6. Adjust the appearance of the flashcards in `index.css` by adding styling rules for each element.
