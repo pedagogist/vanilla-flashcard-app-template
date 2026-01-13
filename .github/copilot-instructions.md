@@ -70,8 +70,8 @@ This application runs directly by opening `index.html` in a browser - no build s
 ### HTML
 - Place all visible elements within `main`.
 - Maintain the existing grid layout structure of `main`.
-- Use IDs that correspond to dataset fields in `#card`.
-- Remove unused elements within `.card-front` and `.card-back` whenever there are fields update (e.g. when `renderCard` in JavaScript is modified).
+- Use IDs that correspond to dataset columns in `#card`.
+- Remove unused elements within `.card-front` and `.card-back` whenever there are columns update (e.g. when `renderCard` in JavaScript is modified).
 - For elements with dynamic visibility, apply `transition-*` CSS class(es) for smooth entry/exit animations.
 - For elements hidden by default, add the `hidden` attribute.
 

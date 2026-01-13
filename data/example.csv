@@ -1,0 +1,4 @@
+id,word,pos,definition,image,audio,video
+1,hello,n,A phrase used for greeting someone.,./res/hello.png,./res/hello.wav,
+2,world,n,"The earth, together with all of its countries and peoples.",,./res/world.wav,
+3,multimedia,adj,Using more than one medium of expression.,,./res/multimedia.wav,./res/multimedia.mp4

@@ -1,4 +1,7 @@
-import example from "./data/example.json" with { type: "json" };
+import { csvParse, autoType } from "https://cdn.jsdelivr.net/npm/d3-dsv/+esm";
+
+const response = await fetch("./data/example.csv");
+const dataset = csvParse(await response.text(), autoType);
 
 /** Loads flashcard progress from local storage if available. */
 function loadProgress() {
@@ -13,7 +16,7 @@ function saveProgress(progress) {
 
 // Sorts the flashcards by their due date to prioritise learning.
 const progressData = loadProgress();
-const cards = example
+const cards = dataset
 	.sort((a, b) => {
 		// Put cards without a dueDate at the last
 		const dateA = progressData[a.id]?.dueDate ? new Date(progressData[a.id].dueDate) : Infinity;
