@@ -118,6 +118,10 @@ document.getElementById("toggle-entries").addEventListener("click", () => {
 
 // Flip the card when the card itself is clicked
 document.getElementById("card-inner").addEventListener("click", event => {
+	// Only flip the card when clicking on the underlying card faces, not any elements inside.
+	// This line is unnecessary for other buttons.
+	if (!event.target?.classList?.contains("card-face")) return;
+
 	event.currentTarget.dataset.side = event.currentTarget.dataset.side === "front" ? "back" : "front";
 });
 
