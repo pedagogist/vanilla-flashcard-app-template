@@ -88,7 +88,7 @@ const transitionHalfDuration = parseFloat(getComputedStyle(document.getElementBy
 /** Renders the current card on both front and back. */
 function renderCard() {
 	// STUDENTS: Start of recommended modifications
-	// If there are more fields in the dataset (e.g., synonyms, example sentences),
+	// If there are more columns in the dataset (e.g., synonyms, example sentences),
 	// display them here (e.g., document.getElementById("card-synonym").textContent = currentCard.synonym).
 
 	// Reset flashcard to the front side
